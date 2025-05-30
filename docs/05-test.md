@@ -42,40 +42,22 @@ if request.method == 'POST':
 
 # <p dir="rtl" align="justify">نحوه تست کردن:</p>
 
-<p dir="rtl" align="justify">1. بدون ESP32 (تست با curl):</p>
 
-<p dir="rtl" align="justify">
-  <ul dir="rtl">
-    <li>می‌توانید یک درخواست POST به آدرس http://localhost/api/location با این محتوا ارسال کنید:</li>
-  </ul>
-</p>
-
-```json
-{
-    "latitude": 35.7749,
-    "longitude": 51.4194,
-    "timestamp": "2023-05-20 14:30:00"
-}
-```
-
-<p dir="rtl" align="justify">
-  <ul dir="rtl">
-    <li>سپس با یک درخواست GET می‌توانید بررسی کنید که داده ذخیره شده است.</li>
-  </ul>
-</p>
 
 <p dir="rtl" align="justify">برای تست کردن سرور Flask با curl، می‌توانید از دستورات زیر استفاده کنید. این دستورات یک درخواست POST با داده‌های JSON به سرور ارسال می‌کنند و سپس با یک درخواست GET نتیجه را بررسی می‌کنند.</p>
 
-<p dir="rtl" align="justify">1. ارسال داده با curl (POST):</p>
+<p dir="rtl" align="justify"> ارسال داده با curl (POST):</p>
 
 ```sh
-curl -X POST \
+curl --unix-socket /root/esp32-flask/backend/flaskapp.sock -X POST \
   http://localhost/api/location \
   -H "Content-Type: application/json" \
   -d '{
-    "latitude": 35.7749,
-    "longitude": 51.4194,
-    "timestamp": "2023-05-20 14:30:00"
+    "latitude": 36.2605,
+    "longitude": 59.6168,
+    "timestamp": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'",
+    "city": "Mashhad",
+    "message": "موقعیت جدید در مشهد"
   }'
 ```
 
@@ -85,38 +67,5 @@ curl -X POST \
 {"message":"Location updated","status":"success"}
 ```
 
-<p dir="rtl" align="justify">2. دریافت داده ذخیره شده (GET):</p>
 
-```sh
-curl -X GET http://localhost/api/location
-```
 
-<p dir="rtl" align="justify">خروجی مورد انتظار (پس از ارسال POST):</p>
-
-```json
-{
-  "city": "Tehran",
-  "latitude": 35.7749,
-  "longitude": 51.4194,
-  "message": "موقعیت به روز شده از دستگاه GPS",
-  "timestamp": "2023-05-20 14:30:00"
-}
-```
-
-<p dir="rtl" align="justify">2. با ESP32:</p>
-
-<p dir="rtl" align="justify">
-  <ul dir="rtl">
-    <li>مطمئن شوید ESP32 به شبکه متصل است و آدرس سرور Flask را به درستی تنظیم کرده‌اید.</li>
-	<li>کد ESP32 باید داده‌های GPS را به صورت POST به همان آدرس ارسال کند.</li>
-  </ul>
-</p>
-
-# <p dir="rtl" align="justify">اگر داده از ESP32 دریافت نشود:</p>
-
-<p dir="rtl" align="justify">
-  <ul dir="rtl">
-    <li>اگر ESP32 داده ارسال نکند یا ارتباط برقرار نشود، سرور همچنان دسته تستی تهران را نمایش می‌دهد.</li>
-	<li>برای اطمینان از دریافت داده از ESP32، می‌توانید در تابع handle_location یک print(data) اضافه کنید تا ببینید داده دریافت می‌شود یا خیر.</li>
-  </ul>
-</p>

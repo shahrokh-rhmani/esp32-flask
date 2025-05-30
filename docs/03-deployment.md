@@ -140,13 +140,20 @@ pip list | grep gunicorn
 Test Unix socket:
 
 ```
-curl --unix-socket /root/esp32-flask/backend/flaskapp.sock http://localhost/api/location
+curl --unix-socket /root/esp32-flask/backend/flaskapp.sock http://localhost/api/location | jq
 ```
 
 Expected output: 
 
 ```
-{"message":"تهران - پایتخت ایران'"}
+{
+  "city": "Tehran",
+  "latitude": 35.6892,
+  "longitude": 51.389,
+  "message": "تهران - پایتخت ایران",
+  "timestamp": "2025-05-30T06:41:40.575927"
+}
+
 ```
 
 
