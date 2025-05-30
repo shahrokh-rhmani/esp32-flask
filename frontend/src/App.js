@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
-
+// Fix for Leaflet marker icons
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
@@ -15,12 +15,15 @@ function App() {
   const [location, setLocation] = useState(null);
 
   useEffect(() => {
-    fetch('api/location')
+    fetch('/api/location')
       .then(response => response.json())
       .then(data => setLocation(data));
   }, []);
 
   if (!location) return <div>Loading...</div>;
+
+  // Create position array from latitude/longitude
+  const position = [location.latitude, location.longitude];
 
   return (
     <div style={{ 
@@ -39,7 +42,7 @@ function App() {
         overflow: 'hidden'
       }}>
         <MapContainer 
-          center={location.position} 
+          center={position} 
           zoom={13} 
           style={{ height: '100%', width: '100%' }}
         >
@@ -47,7 +50,7 @@ function App() {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          <Marker position={location.position}>
+          <Marker position={position}>
             <Popup>
               {location.city} <br /> {location.message}
             </Popup>
