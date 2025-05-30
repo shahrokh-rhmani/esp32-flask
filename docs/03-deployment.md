@@ -53,9 +53,9 @@ After=network.target
 [Service]
 User=www-data
 Group=www-data
-WorkingDirectory=/root/map-flask-react/backend
-Environment="PATH=/root/map-flask-react/backend/venv/bin"
-ExecStart=/root/map-flask-react/backend/venv/bin/gunicorn \
+WorkingDirectory=/root/esp32-flask/backend
+Environment="PATH=/root/esp32-flask/backend/venv/bin"
+ExecStart=/root/esp32-flask/backend/venv/bin/gunicorn \
           --workers 3 \
           --bind unix:flaskapp.sock \
           --timeout 120 \
@@ -81,14 +81,14 @@ cd ../frontend
 npm install
 npm run build
 
-sudo mkdir -p /var/www/map-flask-react
-sudo cp -r build/* /var/www/map-flask-react/
+sudo mkdir -p /var/www/esp32-flask
+sudo cp -r build/* /var/www/esp32-flask/
 ```
 
 # 6. Nginx Configuration
 
 ```
-sudo nano /etc/nginx/sites-available/map-flask-react
+sudo nano /etc/nginx/sites-available/esp32-flask
 ```
 
 Paste this configuration:
@@ -98,7 +98,7 @@ server {
     listen 80;
     server_name your-ip-or-domain;
 
-    root /var/www/map-flask-react;
+    root /var/www/esp32-flask;
     index index.html;
 
     location / {
@@ -107,7 +107,7 @@ server {
 
     location /api {
         include proxy_params;
-        proxy_pass http://unix:/root/map-flask-react/backend/flaskapp.sock;
+        proxy_pass http://unix:/root/esp32-flask/backend/flaskapp.sock;
     }
 }
 ```
@@ -115,7 +115,7 @@ server {
 Enable configuration:
 
 ```
-sudo ln -s /etc/nginx/sites-available/map-flask-react /etc/nginx/sites-enabled
+sudo ln -s /etc/nginx/sites-available/esp32-flask /etc/nginx/sites-enabled
 sudo nginx -t
 sudo systemctl restart nginx
 ```
@@ -123,9 +123,9 @@ sudo systemctl restart nginx
 # 7. Permissions Setup
 
 ```
-sudo chown -R www-data:www-data /root/map-flask-react/backend
-sudo chmod 660 /root/map-flask-react/backend/flaskapp.sock
-sudo chmod 755 /root /root/map-flask-react /root/map-flask-react/backend
+sudo chown -R www-data:www-data /root/esp32-flask/backend
+sudo chmod 660 /root/esp32-flask/backend/flaskapp.sock
+sudo chmod 755 /root /root/esp32-flask /root/esp32-flask/backend
 ```
 
 # 8. Verification Steps
@@ -133,14 +133,14 @@ sudo chmod 755 /root /root/map-flask-react /root/map-flask-react/backend
 Check Gunicorn installation:
 
 ```
-source /root/map-flask-react/backend/venv/bin/activate
+source /root/esp32-flask/backend/venv/bin/activate
 pip list | grep gunicorn
 ```
 
 Test Unix socket:
 
 ```
-curl --unix-socket /root/map-flask-react/backend/flaskapp.sock http://localhost/api/location
+curl --unix-socket /root/esp32-flask/backend/flaskapp.sock http://localhost/api/location
 ```
 
 Expected output: 
